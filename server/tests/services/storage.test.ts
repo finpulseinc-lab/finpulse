@@ -101,4 +101,33 @@ describe('StorageService', () => {
     expect(mockFile).toHaveBeenCalledWith('user1/2026-04/test.pdf.meta.json');
     expect(mockDelete).toHaveBeenCalledTimes(2);
   });
+
+  it('uploadFile throws with path context on GCS error', async () => {
+    mockSave.mockRejectedValueOnce(new Error('GCS unavailable'));
+    await expect(
+      service.uploadFile('user1', '2026-04', 'test.pdf', Buffer.from('data'), 'application/pdf')
+    ).rejects.toThrow('StorageService.uploadFile failed for "user1/2026-04/test.pdf"');
+  });
+
+  it('getContentSample returns placeholder for binary content types', async () => {
+    const sample = await service.getContentSample('user1/2026-04/file.pdf', 'application/pdf');
+    expect(sample).toBe('[binary content — classify by filename only]');
+    expect(mockDownload).not.toHaveBeenCalled();
+  });
+
+  it('listMetadata skips corrupt sidecars and returns the rest', async () => {
+    mockGetFiles.mockResolvedValueOnce([[
+      {
+        name: 'user1/2026-04/good.pdf.meta.json',
+        download: jest.fn().mockResolvedValue([Buffer.from(JSON.stringify(fakeRecord))]),
+      },
+      {
+        name: 'user1/2026-04/bad.pdf.meta.json',
+        download: jest.fn().mockRejectedValue(new Error('corrupt')),
+      },
+    ]]);
+    const records = await service.listMetadata('user1');
+    expect(records).toHaveLength(1);
+    expect(records[0].id).toBe('abc-123');
+  });
 });
