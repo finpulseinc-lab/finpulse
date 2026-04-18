@@ -7,6 +7,9 @@ const config: Config = {
   moduleNameMapper: {
     '^@finpulse/shared$': '<rootDir>/../shared/types',
   },
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
+  },
 };
 
 export default config;
