@@ -22,7 +22,8 @@ export interface ClassificationResult {
   origin: Origin;
   fileType: FileType;
   infoType: InfoType;
-  confidence: number;   // 0.0–1.0
+  /** Must be in [0, 1]. Validated at API ingress — never trust raw value from Claude response. */
+  confidence: number;
   reason: string;       // shown to user; "Classification failed" on error
   aiSuggested: boolean;
   userConfirmed: boolean;
@@ -33,9 +34,9 @@ export interface FileRecord {
   id: string;           // UUID
   userId: string;       // from X-User-ID header — auth-ready, no login yet
   filename: string;
-  gcsPath: string;      // relative path within bucket: {userId}/{YYYY-MM}/{filename}
+  gcsPath: string;      // bucket-relative path, e.g. "user123/2026-04/statement.pdf" (no gs:// prefix)
   uploadedAt: string;   // ISO 8601
-  month: string;        // YYYY-MM derived from uploadedAt
+  month: string;        // YYYY-MM — denormalized from uploadedAt for GCS path lookups; must equal uploadedAt.slice(0, 7)
   classification: ClassificationResult;
 }
 
@@ -60,7 +61,20 @@ export const INFO_TYPE_LABELS: Record<InfoType, string> = {
   property: 'Property',
 };
 
-// PATCH /api/files/:id/classification request body
+export const FILE_TYPE_LABELS: Record<FileType, string> = {
+  pdf: 'PDF',
+  xlsx: 'Excel',
+  csv: 'CSV',
+  png: 'PNG Image',
+  md: 'Markdown',
+};
+
+/**
+ * PATCH /api/files/:id/classification request body.
+ * Confirming is one-way: { confirmed: true } marks the file as reviewed.
+ * { confirmed: false } is intentionally not supported — once confirmed, use override.
+ * Server must reject { override: {} } (empty override is a no-op and likely a client bug).
+ */
 export type PatchClassificationBody =
   | { confirmed: true }
   | { override: { origin?: Origin; infoType?: InfoType } };
