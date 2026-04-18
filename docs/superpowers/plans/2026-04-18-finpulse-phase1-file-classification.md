@@ -113,7 +113,7 @@ finpulse/
     "lint": "npm run lint -w server && npm run lint -w client"
   },
   "devDependencies": {
-    "concurrently": "^8.2.0"
+    "concurrently": "8.2.0"
   }
 }
 ```
@@ -143,28 +143,28 @@ finpulse/
     "test": "jest --runInBand"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
+    "@anthropic-ai/sdk": "0.39.0",
     "@finpulse/shared": "*",
-    "@google-cloud/storage": "^7.9.0",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "multer": "^1.4.5-lts.1",
-    "uuid": "^9.0.0"
+    "@google-cloud/storage": "7.9.0",
+    "cors": "2.8.5",
+    "express": "4.18.2",
+    "multer": "1.4.5-lts.1",
+    "uuid": "9.0.0"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/jest": "^29.5.12",
-    "@types/multer": "^1.4.11",
-    "@types/node": "^20.11.0",
-    "@types/supertest": "^6.0.2",
-    "@types/uuid": "^9.0.7",
-    "jest": "^29.7.0",
-    "supertest": "^6.3.4",
-    "ts-jest": "^29.2.5",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.3"
+    "@types/cors": "2.8.17",
+    "@types/express": "4.17.21",
+    "@types/jest": "29.5.12",
+    "@types/multer": "1.4.11",
+    "@types/node": "20.11.0",
+    "@types/supertest": "6.0.2",
+    "@types/uuid": "9.0.7",
+    "jest": "29.7.0",
+    "supertest": "6.3.4",
+    "ts-jest": "29.2.5",
+    "ts-node": "10.9.2",
+    "ts-node-dev": "2.0.0",
+    "typescript": "5.3.3"
   }
 }
 ```
@@ -227,22 +227,22 @@ export default config;
   },
   "dependencies": {
     "@finpulse/shared": "*",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.0"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "6.22.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.4.0",
-    "@testing-library/react": "^14.2.1",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
-    "@vitejs/plugin-react": "^4.2.1",
-    "jsdom": "^24.0.0",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.0",
-    "vitest": "^1.3.0"
+    "@testing-library/jest-dom": "6.4.0",
+    "@testing-library/react": "14.2.1",
+    "@testing-library/user-event": "14.5.2",
+    "@types/react": "18.2.55",
+    "@types/react-dom": "18.2.19",
+    "@vitejs/plugin-react": "4.2.1",
+    "jsdom": "24.0.0",
+    "tailwindcss": "3.4.1",
+    "typescript": "5.3.3",
+    "vite": "5.1.0",
+    "vitest": "1.3.0"
   }
 }
 ```
@@ -361,13 +361,23 @@ OLD/
 client/dist/
 ```
 
-- [ ] **Step 13: Install all workspace dependencies**
+- [ ] **Step 13: Install all workspace dependencies (no install scripts)**
 
 ```bash
-npm install
+npm install --ignore-scripts
 ```
 
+`--ignore-scripts` prevents any `postinstall`/`preinstall` scripts from running — the primary execution vector for npm supply chain attacks. All packages in this project work correctly without their install scripts.
+
 Expected: `node_modules/` created at root and in each workspace. No errors.
+
+- [ ] **Step 13b: Audit for known CVEs**
+
+```bash
+npm audit --audit-level=high
+```
+
+Expected: 0 high or critical vulnerabilities. If any appear, do not proceed — investigate before continuing.
 
 - [ ] **Step 14: Verify TypeScript compiles in server workspace (no src files yet — expect path error only)**
 
