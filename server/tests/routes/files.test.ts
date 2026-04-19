@@ -176,6 +176,14 @@ describe('PATCH /api/files/:id/classification', () => {
       .send({ confirmed: true });
     expect(res.status).toBe(403);
   });
+
+  it('returns 400 for empty override body', async () => {
+    const res = await request(makeApp())
+      .patch('/api/files/abc-123/classification')
+      .set('X-User-ID', 'user1')
+      .send({ override: {} });
+    expect(res.status).toBe(400);
+  });
 });
 
 describe('DELETE /api/files/:id', () => {

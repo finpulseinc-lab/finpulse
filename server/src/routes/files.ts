@@ -64,7 +64,7 @@ filesRouter.post('/upload', (req, res, next) => {
 
   const records: FileRecord[] = await Promise.all(files.map(async (file) => {
     const gcsPath = await storage.uploadFile(userId, month, file.originalname, file.buffer, file.mimetype);
-    const sample = file.mimetype === 'image/png' ? '' : await storage.getContentSample(gcsPath);
+    const sample = await storage.getContentSample(gcsPath, file.mimetype);
     const classification = await classify(file.originalname, sample, file.mimetype);
     classification.fileType = mimeToFileType(file.mimetype);
 
@@ -108,7 +108,7 @@ filesRouter.get('/:id', async (req, res) => {
   const files = await storage.listMetadata(userId);
   const file = files.find((f) => f.id === req.params.id);
   if (!file) { res.status(404).json({ error: 'File not found' }); return; }
-  if (file.userId !== userId) { res.status(403).json({ error: 'Forbidden' }); return; }
+  if (file.userId !== userId) { res.status(403).json({ error: 'Forbidden' }); return; } // defense-in-depth: listMetadata already scopes by userId prefix
   res.json(file);
 });
 
@@ -118,13 +118,17 @@ filesRouter.patch('/:id/classification', async (req, res) => {
   const files = await storage.listMetadata(userId);
   const file = files.find((f) => f.id === req.params.id);
   if (!file) { res.status(404).json({ error: 'File not found' }); return; }
-  if (file.userId !== userId) { res.status(403).json({ error: 'Forbidden' }); return; }
+  if (file.userId !== userId) { res.status(403).json({ error: 'Forbidden' }); return; } // defense-in-depth: listMetadata already scopes by userId prefix
 
   const body = req.body as { confirmed?: true; override?: { origin?: string; infoType?: string } };
 
   if (body.confirmed === true) {
     file.classification.userConfirmed = true;
   } else if (body.override) {
+    if (!body.override.origin && !body.override.infoType) {
+      res.status(400).json({ error: 'override must include at least one of: origin, infoType' });
+      return;
+    }
     if (body.override.origin) file.classification.origin = body.override.origin as typeof file.classification.origin;
     if (body.override.infoType) file.classification.infoType = body.override.infoType as typeof file.classification.infoType;
     file.classification.userConfirmed = true;
@@ -144,7 +148,7 @@ filesRouter.delete('/:id', async (req, res) => {
   const files = await storage.listMetadata(userId);
   const file = files.find((f) => f.id === req.params.id);
   if (!file) { res.status(404).json({ error: 'File not found' }); return; }
-  if (file.userId !== userId) { res.status(403).json({ error: 'Forbidden' }); return; }
+  if (file.userId !== userId) { res.status(403).json({ error: 'Forbidden' }); return; } // defense-in-depth: listMetadata already scopes by userId prefix
   await storage.deleteFile(file.gcsPath);
   res.status(204).send();
 });
