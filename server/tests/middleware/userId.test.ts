@@ -37,6 +37,17 @@ describe('requireUserId middleware', () => {
     const next = jest.fn() as unknown as NextFunction;
     requireUserId(req, res, next);
     expect((res.status as jest.Mock)).toHaveBeenCalledWith(400);
+    expect((res.json as jest.Mock)).toHaveBeenCalledWith({ error: 'X-User-ID header is required' });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 when X-User-ID header is whitespace only', () => {
+    const req = makeReq({ 'x-user-id': '   ' });
+    const res = makeRes();
+    const next = jest.fn() as unknown as NextFunction;
+    requireUserId(req, res, next);
+    expect((res.status as jest.Mock)).toHaveBeenCalledWith(400);
+    expect((res.json as jest.Mock)).toHaveBeenCalledWith({ error: 'X-User-ID header is required' });
     expect(next).not.toHaveBeenCalled();
   });
 });

@@ -6,8 +6,9 @@ import { Request, Response, NextFunction } from 'express';
  * All downstream code uses res.locals.userId — no changes needed outside this file.
  */
 export function requireUserId(req: Request, res: Response, next: NextFunction): void {
-  const userId = req.headers['x-user-id'];
-  if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+  const raw = req.headers['x-user-id'];
+  const userId = Array.isArray(raw) ? raw[0] : raw;
+  if (!userId || userId.trim() === '') {
     res.status(400).json({ error: 'X-User-ID header is required' });
     return;
   }
