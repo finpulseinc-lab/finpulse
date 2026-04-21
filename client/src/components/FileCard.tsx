@@ -29,12 +29,13 @@ export function FileCard({ file, onPatch, onDelete }: Props) {
       <div>
         <span>{ORIGIN_LABELS[classification.origin]}</span>
         <span>{INFO_TYPE_LABELS[classification.infoType]}</span>
-        <ConfidenceBadge confidence={classification.confidence} />
+        <ConfidenceBadge
+          confidence={classification.confidence}
+          reason={classification.reason}
+          overridden={classification.overridden}
+          confirmed={classification.userConfirmed}
+        />
       </div>
-
-      {classification.userConfirmed && (
-        <span>{classification.overridden ? 'Overridden' : 'Confirmed'}</span>
-      )}
 
       {!classification.userConfirmed && !reviewing && (
         <button type="button" onClick={() => setReviewing(true)}>Review</button>

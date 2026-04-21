@@ -128,4 +128,22 @@ describe('FileCard', () => {
     render(<FileCard file={overridden} onPatch={vi.fn()} />);
     expect(screen.getByText(/overridden/i)).toBeInTheDocument();
   });
+
+  it('shows reason text when confidence is medium', () => {
+    const mediumFile = {
+      ...BASE_FILE,
+      classification: {
+        ...BASE_FILE.classification,
+        confidence: 0.72,
+        reason: 'Pattern partially matches pension documents',
+      },
+    };
+    render(<FileCard file={mediumFile} onPatch={vi.fn()} />);
+    expect(screen.getByText('Pattern partially matches pension documents')).toBeInTheDocument();
+  });
+
+  it('does not show reason text when confidence is high', () => {
+    render(<FileCard file={BASE_FILE} onPatch={vi.fn()} />);
+    expect(screen.queryByText('Looks like a bank statement')).not.toBeInTheDocument();
+  });
 });
