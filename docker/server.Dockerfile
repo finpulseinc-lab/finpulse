@@ -16,7 +16,7 @@ COPY client/ ./client/
 
 # VITE_API_URL is intentionally empty: frontend and backend share the same
 # Cloud Run origin, so all fetch() calls use relative paths (/api/files/...).
-RUN npm run build -w server && npm run build -w client
+RUN npm run build -w shared && npm run build -w server && npm run build -w client
 
 # --- Runtime stage ---
 FROM node:20-alpine
