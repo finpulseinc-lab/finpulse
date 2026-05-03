@@ -18,7 +18,7 @@ export function UploadZone({ onUpload, uploading }: Props) {
 
   return (
     <label
-      className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-8 cursor-pointer hover:bg-gray-50"
+      className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl p-8 cursor-pointer bg-white shadow-sm hover:bg-slate-50 transition-colors"
       onDrop={handleDrop}
       onDragOver={(e) => e.preventDefault()}
     >
@@ -31,11 +31,11 @@ export function UploadZone({ onUpload, uploading }: Props) {
         className="sr-only"
       />
       {uploading ? (
-        <span className="text-sm text-gray-500">Uploading…</span>
+        <span className="text-sm text-slate-500">Uploading…</span>
       ) : (
         <>
-          <span className="text-sm font-medium">Drop files here or click to browse</span>
-          <span className="text-xs text-gray-400 mt-1">Accepted: pdf, xlsx, csv, png, md</span>
+          <span className="text-sm font-medium text-slate-700">Drop files here or click to browse</span>
+          <span className="text-xs text-slate-400 mt-1">Accepted: pdf, xlsx, csv, png, md</span>
         </>
       )}
     </label>
