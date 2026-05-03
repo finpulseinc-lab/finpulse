@@ -39,7 +39,7 @@ export function FileCard({ file, onPatch, onDelete }: Props) {
         className={[
           'flex items-center gap-3 bg-white rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-shadow',
           isPending
-            ? 'border border-slate-200 border-l-4 border-l-amber-400'
+            ? 'border-t border-r border-b border-slate-200 border-l-4 border-l-amber-400'
             : 'border border-slate-200',
         ].join(' ')}
       >
@@ -86,7 +86,7 @@ export function FileCard({ file, onPatch, onDelete }: Props) {
               className="text-xs border border-red-200 text-red-500 hover:bg-red-50 rounded-lg px-2 py-1 transition-colors"
               aria-label="Delete file"
             >
-              ✕
+              <span aria-hidden="true">✕</span>
             </button>
           )}
         </div>

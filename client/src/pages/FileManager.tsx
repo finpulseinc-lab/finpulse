@@ -97,7 +97,7 @@ export function FileManager({ userId }: Props) {
         <select
           value={filterInfoType}
           onChange={(e) => setInfoTypeFilter(e.target.value)}
-          className="text-sm border rounded px-2 py-1 ml-auto"
+          className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ml-auto"
           aria-label="Filter by info type"
         >
           <option value="">All types</option>
@@ -116,7 +116,7 @@ export function FileManager({ userId }: Props) {
         </div>
       )}
 
-      {loading && <p className="text-sm text-gray-500">Loading…</p>}
+      {loading && <p className="text-sm text-slate-500">Loading…</p>}
 
       {error && (
         <div className="text-red-600 text-sm space-y-1">
@@ -126,7 +126,7 @@ export function FileManager({ userId }: Props) {
       )}
 
       {!loading && !error && displayedFiles.length === 0 && (
-        <p className="text-gray-400 text-sm text-center py-8">No files uploaded yet. Drop some files above to get started.</p>
+        <p className="text-slate-400 text-sm text-center py-8">No files uploaded yet. Drop some files above to get started.</p>
       )}
 
       <div className="space-y-3">

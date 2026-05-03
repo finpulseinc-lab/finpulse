@@ -20,12 +20,12 @@ export function App() {
   return (
     <div className="min-h-screen bg-slate-100">
       <Navbar />
-      <div className="pt-14">
+      <main className="pt-14">
         <Routes>
           <Route path="/" element={<FileManager userId={userId} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </div>
+      </main>
     </div>
   );
 }

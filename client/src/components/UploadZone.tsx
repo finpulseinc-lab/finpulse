@@ -18,7 +18,10 @@ export function UploadZone({ onUpload, uploading }: Props) {
 
   return (
     <label
-      className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl p-8 cursor-pointer bg-white shadow-sm hover:bg-slate-50 transition-colors"
+      className={[
+        'flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl p-8 bg-white shadow-sm transition-colors',
+        uploading ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-slate-50',
+      ].join(' ')}
       onDrop={handleDrop}
       onDragOver={(e) => e.preventDefault()}
     >
