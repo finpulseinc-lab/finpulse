@@ -76,6 +76,7 @@ jobs:
             --allow-unauthenticated \
             --min-instances 0 \
             --max-instances 10 \
+            --service-account finpulse-api@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
             --set-secrets "ANTHROPIC_API_KEY=anthropic-api-key:latest,GCS_KEY_JSON=gcs-key-json:latest" \
             --set-env-vars "GCS_BUCKET=${{ env.DATA_BUCKET }}"
 
