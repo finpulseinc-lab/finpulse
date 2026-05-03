@@ -1,8 +1,8 @@
 # GCP Setup (one-time, before first deploy):
 #
 # 1. Create GCS buckets:
-#    gsutil mb -l europe-west1 gs://finpulse-data
-#    gsutil mb -l europe-west1 gs://finpulse-static
+#    gsutil mb -l me-west1 gs://finpulse-data
+#    gsutil mb -l me-west1 gs://finpulse-static
 #    gsutil uniformbucketlevelaccess set on gs://finpulse-data
 #
 # 2. Create service account:
@@ -21,7 +21,7 @@
 #
 # 5. Create Artifact Registry repo:
 #    gcloud artifacts repositories create finpulse \
-#      --repository-format=docker --location=europe-west1
+#      --repository-format=docker --location=me-west1
 name: Deploy
 
 on:
@@ -29,7 +29,7 @@ on:
     branches: [main]
 
 env:
-  GCP_REGION: europe-west1
+  GCP_REGION: me-west1
   ARTIFACT_REPO: finpulse
   CLOUD_RUN_SERVICE: finpulse-api
   DATA_BUCKET: finpulse-data
@@ -79,32 +79,36 @@ jobs:
             --set-secrets "ANTHROPIC_API_KEY=anthropic-api-key:latest,GCS_KEY_JSON=gcs-key-json:latest" \
             --set-env-vars "GCS_BUCKET=${{ env.DATA_BUCKET }}"
 
-  deploy-frontend:
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-      - uses: google-github-actions/setup-gcloud@v2
-      - run: npm ci
-      - name: Build frontend
-        run: npm run build -w client
-        env:
-          VITE_API_URL: ${{ secrets.CLOUD_RUN_URL }}
-      - name: Upload to GCS and invalidate CDN
-        run: |
-          gsutil -m rsync -r -d client/dist gs://${{ env.STATIC_BUCKET }}
-          gcloud compute url-maps invalidate-cdn-cache finpulse-lb \
-            --path "/*" \
-            --global \
-            --async
+  # deploy-frontend is disabled until a custom domain + Cloud CDN Load Balancer
+  # are configured (Console Step 8). The React build is served directly from the
+  # Cloud Run container via Express static middleware.
+  #
+  # deploy-frontend:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     id-token: write
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #         cache: npm
+  #     - uses: google-github-actions/auth@v2
+  #       with:
+  #         workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+  #         service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+  #     - uses: google-github-actions/setup-gcloud@v2
+  #     - run: npm ci
+  #     - name: Build frontend
+  #       run: npm run build -w client
+  #       env:
+  #         VITE_API_URL: ${{ secrets.CLOUD_RUN_URL }}
+  #     - name: Upload to GCS and invalidate CDN
+  #       run: |
+  #         gsutil -m rsync -r -d client/dist gs://${{ env.STATIC_BUCKET }}
+  #         gcloud compute url-maps invalidate-cdn-cache finpulse-lb \
+  #           --path "/*" \
+  #           --global \
+  #           --async
