@@ -104,7 +104,7 @@ describe('OverrideForm', () => {
     );
     render(<OverrideForm classification={BASE} onSubmit={onSubmit} />);
     fireEvent.click(screen.getByRole('button', { name: /confirm/i }));
-    expect(screen.getByRole('button', { name: /confirm/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /saving/i })).toBeDisabled();
     resolve();
     await waitFor(() =>
       expect(screen.getByRole('button', { name: /confirm/i })).not.toBeDisabled(),

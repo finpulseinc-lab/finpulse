@@ -28,24 +28,14 @@ describe('FileCard', () => {
     expect(screen.getByText('statement-2026-04.pdf')).toBeInTheDocument();
   });
 
-  it('renders the month', () => {
+  it('renders metadata line with month, origin, and info type', () => {
     render(<FileCard file={BASE_FILE} onPatch={vi.fn()} />);
-    expect(screen.getByText('2026-04')).toBeInTheDocument();
+    expect(screen.getByText('2026-04 · Bank · Checking Account')).toBeInTheDocument();
   });
 
   it('renders the confidence badge', () => {
     render(<FileCard file={BASE_FILE} onPatch={vi.fn()} />);
     expect(screen.getByText('92%')).toBeInTheDocument();
-  });
-
-  it('renders human-readable origin label', () => {
-    render(<FileCard file={BASE_FILE} onPatch={vi.fn()} />);
-    expect(screen.getByText('Bank')).toBeInTheDocument();
-  });
-
-  it('renders human-readable infoType label', () => {
-    render(<FileCard file={BASE_FILE} onPatch={vi.fn()} />);
-    expect(screen.getByText('Checking Account')).toBeInTheDocument();
   });
 
   it('shows Review button for unconfirmed files', () => {
