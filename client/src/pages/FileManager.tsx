@@ -78,7 +78,7 @@ export function FileManager({ userId }: Props) {
   const availableInfoTypes = [...new Set(files.map((f) => f.classification.infoType))];
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
+    <div className="max-w-2xl mx-auto px-6 pb-6 pt-8 space-y-6">
       <h1 className="text-2xl font-bold">FinPulse — File Manager</h1>
 
       <UploadZone onUpload={handleUpload} uploading={uploading} />
@@ -88,7 +88,7 @@ export function FileManager({ userId }: Props) {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`text-sm px-3 py-1 rounded border ${filterStatus === s ? 'bg-blue-600 text-white' : ''}`}
+            className={`text-sm px-3 py-1 rounded-lg border transition-colors ${filterStatus === s ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200'}`}
           >
             {s === 'all' ? `All (${files.length})` : s === 'pending' ? `Pending review (${pendingCount})` : `Confirmed (${confirmedCount})`}
           </button>
@@ -97,7 +97,7 @@ export function FileManager({ userId }: Props) {
         <select
           value={filterInfoType}
           onChange={(e) => setInfoTypeFilter(e.target.value)}
-          className="text-sm border rounded px-2 py-1 ml-auto"
+          className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ml-auto"
           aria-label="Filter by info type"
         >
           <option value="">All types</option>
@@ -116,7 +116,7 @@ export function FileManager({ userId }: Props) {
         </div>
       )}
 
-      {loading && <p className="text-sm text-gray-500">Loading…</p>}
+      {loading && <p className="text-sm text-slate-500">Loading…</p>}
 
       {error && (
         <div className="text-red-600 text-sm space-y-1">
@@ -126,7 +126,7 @@ export function FileManager({ userId }: Props) {
       )}
 
       {!loading && !error && displayedFiles.length === 0 && (
-        <p className="text-gray-400 text-sm text-center py-8">No files uploaded yet. Drop some files above to get started.</p>
+        <p className="text-slate-400 text-sm text-center py-8">No files uploaded yet. Drop some files above to get started.</p>
       )}
 
       <div className="space-y-3">
